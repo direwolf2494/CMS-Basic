@@ -39,6 +39,15 @@ export default {
       if (!cust || !cust.id) {
         throwError(errors.NoSuchCustomer.name)
       }
+      const existingCustomers = await CustomerRepository.find({
+        where: [
+          { phoneNumber: customer.phoneNumber },
+          { email: customer.email }
+        ]
+      })
+      if (existingCustomers.length) {
+        throwError(errors.PhoneNumberOrEmailInUse.name)
+      }
       // update the customer
       cust = {...cust, ...customer }
       return CustomerRepository.save(cust)
