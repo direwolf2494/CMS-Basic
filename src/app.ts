@@ -4,10 +4,10 @@ import morgan from 'morgan'
 import rateLimit from 'express-rate-limit'
 import { ValidationError } from 'express-validation'
 import express, { NextFunction, Request, Response } from 'express'
+import * as swaggerUI from 'swagger-ui-express'
 
 import { errors } from './helpers/errors'
-import { getLogger } from 'loglevel'
-
+import swaggerDoc from './swagger.json'
 // import routers
 import customersRoutes from './routes/customer'
 const app = express()
@@ -25,6 +25,7 @@ app.use(rateLimit({
 }))
 // setup routes
 app.use('/customer', customersRoutes)
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDoc))
 // global error handler
 app.use((err: ValidationError | Error, req: Request, res: Response, next: NextFunction) => {
   let error: any = {
