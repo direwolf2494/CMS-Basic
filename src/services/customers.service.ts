@@ -1,5 +1,6 @@
 import { CustomerRepository } from './database'
 import { errors, throwError } from '../helpers/errors'
+import { Not } from 'typeorm'
 
 interface ICustomer {
   name: string,
@@ -41,8 +42,8 @@ export default {
       }
       const existingCustomers = await CustomerRepository.find({
         where: [
-          { phoneNumber: customer.phoneNumber },
-          { email: customer.email }
+            { phoneNumber: customer.phoneNumber, id: Not(customerId) },
+            { email: customer.email, id: Not(customerId) }
         ]
       })
       if (existingCustomers.length) {
