@@ -2,7 +2,6 @@
 The code below contains a logic for a basic customer api. Customers have the following attributes:
 
 ### Getting Setup
-```
 The project will require docker to run. Follow the steps below to get the api up and running:
 ```
 docker-compose up
