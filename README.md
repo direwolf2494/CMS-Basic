@@ -100,4 +100,5 @@ curl --location --request DELETE 'localhost:8080/customer/1'
 Unit tests have been written in `jest` with additional mocking/stubbing support from `sinon`. Additionally, api tests have been written to validate end to end functionality. These tests can be run using the following command
 ```
 docker-compose run test
+docker-compose down
 ```
