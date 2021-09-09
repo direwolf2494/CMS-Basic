@@ -2,15 +2,6 @@
 The code below contains a logic for a basic customer api. Customers have the following attributes:
 
 ### Getting Setup
-A .env file should be created in the root directory with the following information:
-```
-API_PORT = 8080
-DATABASE_HOST=db
-DATABASE_USERNAME=dbuser
-DATABASE_PASSWORD=secret
-DATABASE_NAME=cms
-DATABASE_DIALECT=mariadb
-DATABASE_PORT=3306
 ```
 The project will require docker to run. Follow the steps below to get the api up and running:
 ```
