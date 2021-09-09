@@ -85,6 +85,8 @@ A single customer can be deleted by providing the customer id `localhost:8080/cu
 ```
 curl --location --request DELETE 'localhost:8080/customer/1'
 ```
+### Swagger Spec
+When the server is running navigating to `http://localhost:8080/api-docs` will load a `swagger 2.0` spec that will allow testing of the api.
 
 ### Testing
 Unit tests have been written in `jest` with additional mocking/stubbing support from `sinon`. Additionally, api tests have been written to validate end to end functionality. These tests can be run using the following command
