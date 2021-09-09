@@ -1,0 +1,86 @@
+version: "3.9"
+services:
+  db:
+    image: mariadb
+    restart: always
+    volumes:
+      - ./data:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=secret
+      - MYSQL_USER=dbuser
+      - MYSQL_PASSWORD=secret
+      - MYSQL_DATABASE=cms
+    ports:
+      - "3307:3306"
+    networks:
+      - default
+    command: ['mysqld', '--max_allowed_packet=50000M', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci', '--lower_case_table_names=1']
+  api:
+    build: .
+    command: sh -c "./wait-for-it.sh -c 'nc -z db 3306' && npm install && export mode=development; tsc-watch --project . --onSuccess \"nodemon ./dist/index.js\""
+    links:
+      - db
+    volumes:
+      - .:/usr/src/app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      - API_PORT=8080
+      - DATABASE_HOST=db
+      - DATABASE_USERNAME=dbuser
+      - DATABASE_PASSWORD=secret
+      - DATABASE_MIGRATION_USERNAME=dbuser
+      - DATABASE_MIGRATION_PASSWORD=secret
+      - DATABASE_NAME=cms
+      - DATABASE_DIALECT=mariadb
+      - DATABASE_PORT=3306
+    networks:
+      - default
+  # services used for tests
+  db_test:
+    image: mariadb
+    restart: always
+    tmpfs:
+      - /var/lib/mysql:rw
+    environment:
+      - MYSQL_ROOT_PASSWORD=secret
+      - MYSQL_USER=dbuser
+      - MYSQL_PASSWORD=secret
+      - MYSQL_DATABASE=cms
+    ports:
+      - "3310:3306"
+    networks:
+      - default
+    tmpfs:
+      - /var/lib/mysql:rw
+    command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci', '--lower_case_table_names=1']
+    profiles:
+      - tests
+  test:
+    build: .
+    command: sh -c "./wait-for-it.sh -c 'nc -z db_test 3306' && rm -rf dist && export mode=test && npm install && npm test"
+    links:
+      - db_test
+    volumes:
+      - .:/usr/src/app
+    ports:
+      - "8088:8080"
+    depends_on:
+      - db_test
+    environment:
+      - mode=test
+      - DATABASE_HOST=db_test
+      - DATABASE_USERNAME=dbuser
+      - DATABASE_PASSWORD=secret
+      - DATABASE_MIGRATION_USERNAME=dbuser
+      - DATABASE_MIGRATION_PASSWORD=secret
+      - DATABASE_NAME=cms
+      - API_PORT=8080
+      - DATABASE_DIALECT=mariadb
+      - DATABASE_PORT=3306
+    networks:
+      - default
+    profiles:
+      - tests
